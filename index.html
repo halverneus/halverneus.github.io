@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Nomadic Sound</title>
+        <style>
+            :root {
+                --bg: #181414;
+                --primary: #d13434;
+                --text: #e6e1dc;
+                --accent: #ffd9a0;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            html,
+            body {
+                font-family: "Segoe UI", sans-serif;
+                background-color: var(--bg);
+                color: var(--text);
+                scroll-behavior: smooth;
+            }
+
+            header {
+                position: fixed;
+                width: 100%;
+                background-color: rgba(24, 20, 20, 0.9);
+                z-index: 1000;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1rem 2rem;
+                box-shadow: 0 2px 10px #000;
+            }
+
+            header img {
+                height: 50px;
+            }
+
+            nav a {
+                margin: 0 1rem;
+                text-decoration: none;
+                color: var(--text);
+                font-weight: bold;
+                transition: color 0.3s;
+            }
+
+            nav a:hover {
+                color: var(--accent);
+            }
+
+            section {
+                padding: 7rem 2rem 3rem;
+                max-width: 900px;
+                margin: 0 auto;
+            }
+
+            h1,
+            h2 {
+                color: var(--accent);
+                margin-bottom: 1rem;
+            }
+
+            .portfolio-nav {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+                justify-content: center;
+                margin-bottom: 2rem;
+            }
+
+            .portfolio-nav a {
+                padding: 0.5rem 1rem;
+                border: 1px solid var(--primary);
+                border-radius: 5px;
+                background: transparent;
+                color: var(--text);
+                text-decoration: none;
+                transition: background 0.3s;
+            }
+
+            .portfolio-nav a:hover {
+                background: var(--primary);
+            }
+
+            audio,
+            video {
+                margin: 1rem 0;
+                width: 100%;
+            }
+
+            .fade-enter {
+                opacity: 0;
+                transform: translateY(20px);
+                transition:
+                    opacity 0.6s,
+                    transform 0.6s;
+            }
+
+            .fade-enter-active {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            @media (max-width: 600px) {
+                header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+
+                nav {
+                    margin-top: 0.5rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <img
+                src="assets/Nomadic_Sound_Transparent.png"
+                alt="Nomadic Sound Logo"
+            />
+            <nav>
+                <a href="#about">About</a>
+                <a href="#portfolio">Portfolio</a>
+            </nav>
+        </header>
+
+        <section id="about">
+            <h1>About Nicole</h1>
+            <p>
+                Nicole is a dynamic professional with diverse skill sets
+                including experience from manufacturing technician to software
+                developer to office manager. Most recently, for two years, she
+                served as Board President for a roller derby league... (rest of
+                about text here).
+            </p>
+        </section>
+
+        <section id="portfolio">
+            <h1>Portfolio</h1>
+            <div class="portfolio-nav">
+                <a href="#project1">Final Track</a>
+                <a href="#project2">Sound Design</a>
+                <a href="#project3">Will It Stop</a>
+                <a href="#project4">Theme & Variations</a>
+            </div>
+
+            <div id="project1">
+                <h2>Final Track</h2>
+                <audio controls src="audio/final_track.mp3"></audio>
+                <p>
+                    As I reflect on this piece... (copy in full from Listen
+                    page)
+                </p>
+            </div>
+
+            <div id="project2">
+                <h2>Sound Design Reel</h2>
+                <video
+                    controls
+                    poster="poster_image.png"
+                    src="video/sound_design.mp4"
+                ></video>
+                <p>
+                    As a sound design student, I am passionate about
+                    exploring... (copy in full from Look & Listen)
+                </p>
+            </div>
+
+            <div id="project3">
+                <h2>Will It Stop</h2>
+                <audio controls src="audio/will_it_stop.mp3"></audio>
+                <p>
+                    In mixing and mastering "Will It Stop"... (copy from page)
+                </p>
+            </div>
+
+            <div id="project4">
+                <h2>Theme & Variations</h2>
+                <audio controls src="audio/cinderella_original.mp3"></audio>
+                <p>Original track description...</p>
+
+                <audio controls src="audio/cinderella_var1.mp3"></audio>
+                <p>Variation 1: ...</p>
+
+                <audio controls src="audio/cinderella_var2.mp3"></audio>
+                <p>Variation 2: ...</p>
+
+                <audio controls src="audio/cinderella_var3.mp3"></audio>
+                <p>Variation 3: ...</p>
+            </div>
+        </section>
+
+        <script>
+            // Add fade effect for new sections (if enhanced with JS routing later)
+            document.addEventListener("DOMContentLoaded", () => {
+                document.querySelectorAll("section").forEach((section) => {
+                    section.classList.add("fade-enter");
+                    setTimeout(
+                        () => section.classList.add("fade-enter-active"),
+                        100,
+                    );
+                });
+            });
+        </script>
+    </body>
+</html>
