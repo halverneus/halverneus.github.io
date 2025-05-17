@@ -6,6 +6,25 @@
         <title>Nomadic Sound</title>
         <link rel="stylesheet" href="css/styles.css" />
         <script src="js/scripts.js" defer></script>
+        <script>
+            // This script ensures only one media element plays at a time
+            document.addEventListener('DOMContentLoaded', function() {
+                // Get all audio and video elements
+                const mediaElements = document.querySelectorAll('audio, video');
+                
+                // Add play event listener to each media element
+                mediaElements.forEach(media => {
+                    media.addEventListener('play', function() {
+                        // Pause all other media elements
+                        mediaElements.forEach(otherMedia => {
+                            if (otherMedia !== media && !otherMedia.paused) {
+                                otherMedia.pause();
+                            }
+                        });
+                    });
+                });
+            });
+        </script>
     </head>
     <body>
         <header id="main-header">
