@@ -10,6 +10,8 @@
                 --primary: #d13434;
                 --text: #e6e1dc;
                 --accent: #ffd9a0;
+                --header-initial-height: 340px;
+                --header-final-height: 80px;
             }
 
             * {
@@ -28,18 +30,55 @@
 
             header {
                 position: fixed;
-                width: 100%;
-                background-color: rgba(24, 20, 20, 0.9);
+                top: 0;
+                left: 0;
+                right: 0;
+                height: var(--header-initial-height);
+                background-color: rgba(24, 20, 20, 1);
                 z-index: 1000;
-                display: flex;
-                justify-content: space-between;
+                /* display: flex;
+                flex-direction: column;
                 align-items: center;
-                padding: 1rem 2rem;
-                box-shadow: 0 2px 10px #000;
+                justify-content: center; */
+                transition: all 0.4s ease;
+            }
+
+            header.shrink {
+                height: var(--header-final-height);
+                /* flex-direction: row;
+                justify-content: space-between;
+                padding: 0 2rem; */
             }
 
             header img {
-                height: 50px;
+                position: relative;
+                left: calc(50% - 120px);
+                top: 50px;
+                width: 240px;
+                transition: all 0.4s ease;
+            }
+
+            header.shrink img {
+                left: 20px;
+                top: 10px;
+                width: 50px;
+            }
+
+            header nav {
+                position: absolute;
+                top: 280px;
+                left: 50%;
+                transform: translateX(-50%);
+                transition: all 0.4s ease;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+            }
+
+            header.shrink nav {
+                top: 10px;
+                left: 100%;
+                transform: translateX(-110%);
             }
 
             nav a {
@@ -54,8 +93,27 @@
                 color: var(--accent);
             }
 
+            nav a.active {
+                color: var(--accent);
+                position: relative;
+            }
+
+            nav a.active::after {
+                content: "";
+                position: absolute;
+                bottom: -3px;
+                left: 0;
+                width: 100%;
+                height: 2px;
+                background-color: var(--accent);
+            }
+
+            main {
+                padding-top: var(--header-initial-height);
+            }
+
             section {
-                padding: 7rem 2rem 3rem;
+                padding: 4rem 2rem 3rem;
                 max-width: 900px;
                 margin: 0 auto;
             }
@@ -110,7 +168,12 @@
             @media (max-width: 600px) {
                 header {
                     flex-direction: column;
-                    align-items: flex-start;
+                    align-items: center;
+                }
+
+                header.shrink {
+                    flex-direction: column;
+                    align-items: center;
                 }
 
                 nav {
@@ -120,92 +183,316 @@
         </style>
     </head>
     <body>
-        <header>
+        <header id="main-header">
             <img
-                src="assets/Nomadic_Sound_Transparent.png"
+                src="assets/img/nomadic_sound_logo.png"
                 alt="Nomadic Sound Logo"
             />
             <nav>
-                <a href="#about">About</a>
-                <a href="#portfolio">Portfolio</a>
+                <a href="#home" data-section="home" class="active">Home</a>
+                <a href="#about" data-section="about">About</a>
+                <a href="#portfolio" data-section="portfolio">Portfolio</a>
             </nav>
         </header>
 
-        <section id="about">
-            <h1>About Nicole</h1>
-            <p>
-                Nicole is a dynamic professional with diverse skill sets
-                including experience from manufacturing technician to software
-                developer to office manager. Most recently, for two years, she
-                served as Board President for a roller derby league... (rest of
-                about text here).
-            </p>
-        </section>
-
-        <section id="portfolio">
-            <h1>Portfolio</h1>
-            <div class="portfolio-nav">
-                <a href="#project1">Final Track</a>
-                <a href="#project2">Sound Design</a>
-                <a href="#project3">Will It Stop</a>
-                <a href="#project4">Theme & Variations</a>
-            </div>
-
-            <div id="project1">
-                <h2>Final Track</h2>
-                <audio controls src="audio/final_track.mp3"></audio>
+        <main>
+            <section id="home">
+                <h1>Home</h1>
+                <p>Welcome to Nomadic Sound!</p>
                 <p>
-                    As I reflect on this piece... (copy in full from Listen
-                    page)
+                    Explore our website to learn more about our services and
+                    offerings.
                 </p>
-            </div>
-
-            <div id="project2">
-                <h2>Sound Design Reel</h2>
-                <video
-                    controls
-                    poster="poster_image.png"
-                    src="video/sound_design.mp4"
-                ></video>
+                <p>Discover how we can help you achieve your audio goals.</p>
+            </section>
+            <section id="about">
+                <h1>About Nicole</h1>
                 <p>
-                    As a sound design student, I am passionate about
-                    exploring... (copy in full from Look & Listen)
+                    Nicole is a dynamic professional with diverse skill sets
+                    including experience from manufacturing technician to
+                    software developer to office manager. Most recently, for two
+                    years, she served as Board President for a roller derby
+                    league, overseeing agendas, meetings, and league business.
+                    She's adept at scheduling, event planning, and staff
+                    management. Nicole also showcased her organizational and
+                    customer service skills in previous jobs as an office
+                    manager. In software development, Nicole worked as a
+                    freelance Software Developer using her web development and
+                    administration skills, maintaining software repositories,
+                    and communicating with investors. She was also a Repair
+                    Technician excelling in troubleshooting, repair, and
+                    meticulous documentation. As a manufacturing technician,
+                    Nicole was able to develop her supervisory skills and
+                    adaptability. Her strong community spirit and leadership
+                    flair shine through her roles in roller derby, nonprofit
+                    volunteering, and beyond. Currently, she is attending
+                    college full-time to achieve her Bachelor's degree in Audio
+                    Production. Not one to stay still for long, besides her love
+                    of music and attending live concerts, Nicole also loves to
+                    be active in and outdoors.
                 </p>
-            </div>
+            </section>
 
-            <div id="project3">
-                <h2>Will It Stop</h2>
-                <audio controls src="audio/will_it_stop.mp3"></audio>
-                <p>
-                    In mixing and mastering "Will It Stop"... (copy from page)
-                </p>
-            </div>
+            <section id="portfolio">
+                <h1>Portfolio</h1>
+                <div class="portfolio-nav">
+                    <a href="#project1">Final Track</a>
+                    <a href="#project2">Sound Design</a>
+                    <a href="#project3">Will It Stop</a>
+                    <a href="#project4">Theme & Variations</a>
+                </div>
 
-            <div id="project4">
-                <h2>Theme & Variations</h2>
-                <audio controls src="audio/cinderella_original.mp3"></audio>
-                <p>Original track description...</p>
+                <div id="project1">
+                    <h2>Final Track</h2>
+                    <audio controls src="audio/final_track.mp3"></audio>
 
-                <audio controls src="audio/cinderella_var1.mp3"></audio>
-                <p>Variation 1: ...</p>
+                    <p>
+                        As I reflect on this piece, I get the feeling of brisk,
+                        motivated, and purposeful movement. I hear heavy
+                        influences of early ‘90s pop synth sound frequently used
+                        in workout videos and anime. It has quite a bit of
+                        nostalgia to it, so I went with it. It could be used for
+                        workout routines and motivational videos. I could also
+                        hear it in a video game, with a car race.
+                    </p>
 
-                <audio controls src="audio/cinderella_var2.mp3"></audio>
-                <p>Variation 2: ...</p>
+                    <p>
+                        The meter of my composition is 4/4, and the tempo is at
+                        120bpm. I started with the high hats on the up and down
+                        beats and ended each bar with a clap sound as the “open
+                        high-hat.” I added the snare to beats 2 and 4, with some
+                        syncopation to every 4th bar. To add more syncopation, I
+                        put extra kicks and snares in some measures, as well as
+                        a snare in the final beat of bar 16, which brings the
+                        beat back. I also added percussion sounds and used them
+                        to double up the high hats at the beginning of each bar.
+                        The bass was derived from the beat of the kick drum, and
+                        it followed that rhythm throughout the piece. I then
+                        lengthened some of the notes at the end of most bars. It
+                        gave it a bit more of a drawn-out feel, which grooves
+                        nicely to the harmony.
+                    </p>
 
-                <audio controls src="audio/cinderella_var3.mp3"></audio>
-                <p>Variation 3: ...</p>
-            </div>
-        </section>
+                    <p>
+                        The first half of this piece is in the key of A minor,
+                        and the chord progression I chose is, Am | F | C | G.
+                        This progression has a powerful, consonant sound. I then
+                        inverted all the chords to sound more even and not jump
+                        from one octave to another. I used one chord per bar and
+                        repeated the 4 bars until the end of bar 16. For my
+                        melody, I went with a motif, giving it a relaxing feel,
+                        but also one that expresses movement. The second half of
+                        the piece is in the parallel key to A minor, which is A
+                        major. For the chord progression, I went with is, A E |
+                        D G#dim | Bm | A. I kept the melody as a motif, with
+                        different, and longer notes. The tone is still relaxing
+                        but has more of a cooldown effect than movement.
+                    </p>
+
+                    <p>
+                        Starting at bar 17, using Quick Sampler, I created an
+                        original audio sample for my kick track from a sound
+                        effect I had recorded for a different project. I then
+                        used ES P to manipulate white noise and create original
+                        synth sounds for my snare. Continuing to use ES P, I
+                        dialed in some square waves for my bass track. I then
+                        recorded the sound of a pair of rusted scissors
+                        “cutting” to the rhythm of the beat. This added a
+                        slightly percussive and ambient sound.
+                    </p>
+
+                    <p>
+                        For mixing, I used dynamic processors on every track,
+                        but mostly compressors and EQs. First, I placed a
+                        compressor on my recorded audio track to level out the
+                        highs and lows. I then went in with an EQ on the same
+                        track to cut the high frequencies. Next, I went in with
+                        some time-based effects. To make the drums and
+                        percussion sound fuller, I added a Chroma Reverb effect.
+                        I put the same effect on the recorded audio, as it
+                        helped it merge better into the mix. Lastly, I added a
+                        Stereo Delay effect to the recorded audio to help it
+                        carry throughout the song.
+                    </p>
+                </div>
+
+                <div id="project2">
+                    <h2>Sound Design Reel</h2>
+                    <video
+                        controls
+                        poster="poster_image.png"
+                        src="video/sound_design.mp4"
+                    ></video>
+                    <p>
+                        As a sound design student, I am passionate about
+                        exploring how sound can enhance the user experience and
+                        evoke powerful emotions. This demo reel I created for
+                        school showcases a variety of techniques that I used to
+                        create unforgettable soundscapes, from foley and field
+                        recordings to editing and layering. Dive in and discover
+                        how powerful sound design can be when it's created with
+                        creativity and passion.
+                    </p>
+                </div>
+
+                <div id="project3">
+                    <h2>Will It Stop</h2>
+                    <audio controls src="audio/will_it_stop.mp3"></audio>
+                    <p>
+                        In mixing and mastering "Will It Stop," I carefully
+                        blended a combination of loops, MIDI instruments,
+                        recorded sounds, and vocals to create a cohesive
+                        industrial dance vibe. I balanced the rhythmic drive of
+                        the loops with aggressive, mechanical textures from the
+                        MIDI instruments, enhancing their presence through
+                        precise EQ and compression. The recorded sounds provided
+                        a gritty, tactile quality that added depth to the track,
+                        while the vocals, processed with reverb, were carefully
+                        placed to cut through the dense instrumental layers. I
+                        ensured the overall energy remained intense and dynamic
+                        throughout the mastering process. I used multiband
+                        compression and limiting to maintain clarity and punch
+                        while optimizing the song for various playback systems.
+                    </p>
+                </div>
+
+                <div id="project4">
+                    <h2>Theme & Variations</h2>
+                    <audio controls src="audio/cinderella_original.mp3"></audio>
+                    <p>
+                        For this remix project, I chose Cinderella by Mikaela
+                        Davis and Southern Star from the Cambridge library,
+                        categorized under psychedelic rock. The original song
+                        has a slow groove with a folk/country feel, and I was
+                        especially drawn to its mesmerizing, dreamy melodic
+                        harps. While listening, I envisioned a way to change the
+                        groove, making the percussion bigger and more upfront to
+                        give the track a fresh dynamic.
+                    </p>
+
+                    <audio controls src="audio/cinderella_var1.mp3"></audio>
+                    <p>
+                        In this variation, I replaced the drums with a more
+                        rock-oriented, electric sound. I also changed the groove
+                        to double-time in the chorus, adding more energy and
+                        drive to that section.
+                    </p>
+
+                    <audio controls src="audio/cinderella_var2.mp3"></audio>
+                    <p>
+                        In this variation, I recorded and incorporated a live
+                        shaker to enhance the double-time groove sections. The
+                        added shaker brings a more organic feel to the rhythm,
+                        creating a natural, driving pulse that complements the
+                        increased energy in these parts. It also adds a subtle
+                        dynamic texture, helping to glue the percussion together
+                        while maintaining a lively, human touch.
+                    </p>
+
+                    <audio controls src="audio/cinderella_var3.mp3"></audio>
+                    <p>
+                        Building on the previous two variations, I created
+                        ambient wind sounds to add a final touch of natural
+                        movement. This element not only enhances the atmosphere
+                        but also serves as a subtle cue for the transition into
+                        the double-time groove, reinforcing the rhythmic shift
+                        and making the change feel more organic and intentional.
+                    </p>
+                </div>
+            </section>
+        </main>
 
         <script>
-            // Add fade effect for new sections (if enhanced with JS routing later)
             document.addEventListener("DOMContentLoaded", () => {
-                document.querySelectorAll("section").forEach((section) => {
-                    section.classList.add("fade-enter");
+                // Function to show a specific section
+                const showSection = (sectionId) => {
+                    // Default to home if sectionId is invalid
+                    if (!document.getElementById(sectionId)) {
+                        sectionId = "home";
+                    }
+
+                    // Hide all sections with fade out
+                    document.querySelectorAll("section").forEach((section) => {
+                        section.style.display = "none";
+                        section.classList.remove("fade-enter-active");
+                    });
+
+                    // Show only the target section
+                    const targetSection = document.getElementById(sectionId);
+                    targetSection.style.display = "block";
+
+                    // Add animation class
+                    targetSection.classList.remove("fade-enter-active");
+                    targetSection.classList.add("fade-enter");
                     setTimeout(
-                        () => section.classList.add("fade-enter-active"),
+                        () => targetSection.classList.add("fade-enter-active"),
                         100,
                     );
+
+                    // Update active link
+                    document.querySelectorAll("nav a").forEach((navLink) => {
+                        navLink.classList.remove("active");
+                    });
+                    document
+                        .querySelector(`nav a[data-section="${sectionId}"]`)
+                        ?.classList.add("active");
+                };
+
+                // Initialize all sections with fade effect
+                document.querySelectorAll("section").forEach((section) => {
+                    section.classList.add("fade-enter");
+                    // Hide all sections initially (we'll show the correct one after)
+                    section.style.display = "none";
+                });
+
+                // Check for hash in URL or default to home
+                const initialSection = window.location.hash
+                    ? window.location.hash.substring(1)
+                    : "home";
+                showSection(initialSection);
+
+                // Add fade-enter-active class to the visible section
+                setTimeout(() => {
+                    document
+                        .getElementById(initialSection)
+                        ?.classList.add("fade-enter-active");
+                }, 100);
+
+                // Add click event listeners to navigation links
+                document.querySelectorAll("nav a").forEach((link) => {
+                    link.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        const targetId = link.getAttribute("data-section");
+
+                        // Don't do anything if clicking the already active section
+                        if (link.classList.contains("active")) {
+                            return;
+                        }
+
+                        // Update URL hash without triggering scroll
+                        history.pushState(null, null, `#${targetId}`);
+
+                        // Show the target section
+                        showSection(targetId);
+                    });
+                });
+
+                // Listen for hash changes in URL (for browser back/forward buttons)
+                window.addEventListener("hashchange", () => {
+                    const sectionId =
+                        window.location.hash.substring(1) || "home";
+                    showSection(sectionId);
+                });
+
+                const header = document.getElementById("main-header");
+                const shrinkOffset = 150;
+
+                window.addEventListener("scroll", () => {
+                    if (window.scrollY > shrinkOffset) {
+                        header.classList.add("shrink");
+                    } else {
+                        header.classList.remove("shrink");
+                    }
                 });
             });
         </script>
