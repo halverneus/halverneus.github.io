@@ -140,27 +140,114 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   const header = document.getElementById("main-header");
-  const shrinkOffset = 150;
+  const initialHeaderHeight = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-initial-height'));
+  const finalHeaderHeight = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-final-height'));
+  const shrinkOffset = 20; // Start transition even earlier
+  const transitionRange = 130; // Range over which the transition happens
+  
+  // Initialize main padding on load
+  document.querySelector('main').style.paddingTop = `${initialHeaderHeight + 20}px`;
 
+  // Add function to update main content padding based on header height
+  const updateMainPadding = (headerHeight) => {
+    document.querySelector('main').style.paddingTop = `${headerHeight + 20}px`;
+  };
+  
   window.addEventListener("scroll", () => {
-    if (window.scrollY > shrinkOffset) {
+    // Calculate header height based on scroll position for smooth transition
+    if (window.scrollY <= shrinkOffset) {
+      // Fully expanded header
+      header.classList.remove("shrink");
+      header.style.height = `${initialHeaderHeight}px`;
+      updateMainPadding(initialHeaderHeight);
+      
+      // Position elements for large header
+      document.querySelector('header img').style.left = 'calc(50% - 120px)';
+      document.querySelector('header img').style.top = '50px';
+      document.querySelector('header img').style.width = '240px';
+      document.querySelector('header nav').style.top = '280px';
+      document.querySelector('header nav').style.left = '50%';
+      document.querySelector('header nav').style.transform = 'translateX(-50%)';
+    } else if (window.scrollY >= shrinkOffset + transitionRange) {
+      // Fully collapsed header
       header.classList.add("shrink");
+      header.style.height = `${finalHeaderHeight}px`;
+      updateMainPadding(finalHeaderHeight);
+      
+      // Position elements for small header
+      document.querySelector('header img').style.left = '20px';
+      document.querySelector('header img').style.top = '10px';
+      document.querySelector('header img').style.width = '50px';
+      document.querySelector('header nav').style.top = '10px';
+      document.querySelector('header nav').style.left = '100%';
+      document.querySelector('header nav').style.transform = 'translateX(-110%)';
+    } else {
+      // Calculate intermediate height during transition
+      const scrollProgress = (window.scrollY - shrinkOffset) / transitionRange;
+      const currentHeight = initialHeaderHeight - scrollProgress * (initialHeaderHeight - finalHeaderHeight);
+      header.style.height = `${currentHeight}px`;
+      updateMainPadding(currentHeight);
+      
+      // Calculate intermediate positions for elements
+      const logoLeftStart = 50; // percentage minus 120px
+      const logoLeftEnd = 20; // pixels
+      const logoTopStart = 50; // pixels
+      const logoTopEnd = 10; // pixels
+      const logoWidthStart = 240; // pixels
+      const logoWidthEnd = 50; // pixels
+      
+      // Interpolate logo position and size
+      const logoLeft = scrollProgress <= 0.5 ? 
+        `calc(${(1 - scrollProgress * 2) * logoLeftStart}% - ${(1 - scrollProgress * 2) * 120}px)` : 
+        `${logoLeftEnd + (0.5 - Math.min(0.5, scrollProgress - 0.5)) * (logoLeftStart * 2)}px`;
+      const logoTop = logoTopStart - scrollProgress * (logoTopStart - logoTopEnd);
+      const logoWidth = logoWidthStart - scrollProgress * (logoWidthStart - logoWidthEnd);
+      
+      document.querySelector('header img').style.left = logoLeft;
+      document.querySelector('header img').style.top = `${logoTop}px`;
+      document.querySelector('header img').style.width = `${logoWidth}px`;
+      
+      // Interpolate nav position
+      const navTopStart = 280; // pixels
+      const navTopEnd = 10; // pixels
+      const navTop = navTopStart - scrollProgress * (navTopStart - navTopEnd);
+      
+      document.querySelector('header nav').style.top = `${navTop}px`;
+      
+      if (scrollProgress > 0.6) {
+        // Start moving nav to the right side
+        const navTransitionProgress = (scrollProgress - 0.6) / 0.4; // 0 to 1 during last 40% of scroll
+        const navLeftStart = 50; // percent
+        const navLeftEnd = 100; // percent
+        const navLeft = navLeftStart + navTransitionProgress * (navLeftEnd - navLeftStart);
+        
+        document.querySelector('header nav').style.left = `${navLeft}%`;
+        document.querySelector('header nav').style.transform = `translateX(-${50 + navTransitionProgress * 60}%)`;
+      } else {
+        document.querySelector('header nav').style.left = '50%';
+        document.querySelector('header nav').style.transform = 'translateX(-50%)';
+      }
+      
+      // Add or remove class based on progress
+      if (scrollProgress > 0.8) {
+        header.classList.add("shrink");
+      } else {
+        header.classList.remove("shrink");
+      }
+    }
 
-      // Make the portfolio nav sticky when in portfolio section
-      if (document.getElementById("portfolio").style.display === "block") {
-        const portfolioNav = document.querySelector(".portfolio-nav");
-        if (portfolioNav) {
-          portfolioNav.style.position = "sticky";
-          portfolioNav.style.top = `${header.offsetHeight}px`; // Dynamic header height
-          portfolioNav.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
-          portfolioNav.style.opacity = "1";
-          // Highlight the current active portfolio section in the nav
-          updateActivePortfolioLink();
-        }
+    // Make the portfolio nav sticky when in portfolio section
+    if (document.getElementById("portfolio").style.display === "block") {
+      const portfolioNav = document.querySelector(".portfolio-nav");
+      if (portfolioNav) {
+        portfolioNav.style.position = "sticky";
+        portfolioNav.style.top = `${header.offsetHeight}px`; // Dynamic header height
+        portfolioNav.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
+        portfolioNav.style.opacity = "1";
+        // Highlight the current active portfolio section in the nav
+        updateActivePortfolioLink();
       }
     } else {
-      header.classList.remove("shrink");
-
       // Reset portfolio nav
       const portfolioNav = document.querySelector(".portfolio-nav");
       if (portfolioNav) {
