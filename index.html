@@ -4,274 +4,8 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Nomadic Sound</title>
-        <style>
-            :root {
-                --bg: #181414;
-                --primary: #d13434;
-                --text: #e6e1dc;
-                --accent: #ffd9a0;
-                --header-initial-height: 340px;
-                --header-final-height: 80px;
-            }
-
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-            
-            .portfolio-intro {
-                text-align: center;
-                margin-bottom: 2rem;
-                font-size: 1.1rem;
-                max-width: 800px;
-                margin-left: auto;
-                margin-right: auto;
-            }
-            
-            .project-meta {
-                color: var(--secondary);
-                font-style: italic;
-                margin-bottom: 1.5rem;
-                font-size: 0.9rem;
-                letter-spacing: 0.5px;
-                display: inline-block;
-                padding: 0.3rem 0.8rem;
-                background-color: rgba(var(--secondary-rgb), 0.1);
-                border-radius: 20px;
-            }
-
-            html,
-            body {
-                font-family: "Segoe UI", sans-serif;
-                background-color: var(--bg);
-                color: var(--text);
-                scroll-behavior: smooth;
-            }
-
-            header {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: var(--header-initial-height);
-                background-color: rgba(24, 20, 20, 1);
-                z-index: 1000;
-                /* display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center; */
-                transition: all 0.4s ease;
-            }
-
-            header.shrink {
-                height: var(--header-final-height);
-                /* flex-direction: row;
-                justify-content: space-between;
-                padding: 0 2rem; */
-            }
-
-            header img {
-                position: relative;
-                left: calc(50% - 120px);
-                top: 50px;
-                width: 240px;
-                transition: all 0.4s ease;
-            }
-
-            header.shrink img {
-                left: 20px;
-                top: 10px;
-                width: 50px;
-            }
-
-            header nav {
-                position: absolute;
-                top: 280px;
-                left: 50%;
-                transform: translateX(-50%);
-                transition: all 0.4s ease;
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-            }
-
-            header.shrink nav {
-                top: 10px;
-                left: 100%;
-                transform: translateX(-110%);
-            }
-
-            nav a {
-                margin: 0 1rem;
-                text-decoration: none;
-                color: var(--text);
-                font-weight: bold;
-                transition: color 0.3s;
-            }
-
-            nav a:hover {
-                color: var(--accent);
-            }
-
-            nav a.active {
-                color: var(--accent);
-                position: relative;
-            }
-
-            nav a.active::after {
-                content: "";
-                position: absolute;
-                bottom: -3px;
-                left: 0;
-                width: 100%;
-                height: 2px;
-                background-color: var(--accent);
-            }
-
-            main {
-                padding-top: var(--header-initial-height);
-            }
-
-            section {
-                padding: 2rem;
-                max-width: 1200px;
-                margin: 0 auto;
-            }
-            
-            .portfolio-item {
-                margin-bottom: 5rem;
-                padding-bottom: 4rem;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                position: relative;
-            }
-            
-            .portfolio-item:last-child {
-                border-bottom: none;
-                margin-bottom: 2rem;
-            }
-            
-            .portfolio-item h2 {
-                font-size: 2.2rem;
-                margin-bottom: 0.8rem;
-                color: var(--primary);
-                position: relative;
-                display: inline-block;
-            }
-            
-            .portfolio-item h2::after {
-                content: '';
-                position: absolute;
-                bottom: -5px;
-                left: 0;
-                width: 60%;
-                height: 3px;
-                background-color: var(--primary);
-            }
-            
-            .audio-player {
-                width: 100%;
-                margin: 1.5rem 0;
-                border-radius: 8px;
-            }
-
-            h1,
-            h2 {
-                margin-bottom: 1.5rem;
-                color: var(--primary);
-            }
-            
-            h1 {
-                text-align: center;
-                font-size: 2.5rem;
-                position: relative;
-                display: inline-block;
-                margin-left: auto;
-                margin-right: auto;
-                margin-bottom: 1rem;
-            }
-            
-            h1::after {
-                content: '';
-                position: absolute;
-                bottom: -10px;
-                left: 25%;
-                width: 50%;
-                height: 4px;
-                background-color: var(--primary);
-            }
-
-            .portfolio-nav {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 1rem;
-                justify-content: center;
-                margin-bottom: 3rem;
-                padding: 1rem;
-                background-color: rgba(18, 18, 18, 0.9);
-                z-index: 10;
-                border-radius: 8px;
-                backdrop-filter: blur(5px);
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                transition: all 0.3s ease;
-            }
-
-            .portfolio-nav a {
-                padding: 0.5rem 1.5rem;
-                border: 1px solid var(--primary);
-                border-radius: 25px;
-                background: transparent;
-                color: var(--text);
-                text-decoration: none;
-                transition: all 0.3s;
-                font-weight: 500;
-                letter-spacing: 0.5px;
-            }
-
-            .portfolio-nav a:hover {
-                background: var(--primary);
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(184, 134, 11, 0.3);
-                color: var(--background);
-            }
-
-            audio,
-            video {
-                width: 100%;
-                margin-bottom: 1.5rem;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            }
-
-            .fade-enter {
-                opacity: 0;
-                transform: translateY(20px);
-                transition:
-                    opacity 0.6s,
-                    transform 0.6s;
-            }
-
-            .fade-enter-active {
-                opacity: 1;
-                transform: translateY(0);
-            }
-
-            @media (max-width: 600px) {
-                header {
-                    flex-direction: column;
-                    align-items: center;
-                }
-
-                header.shrink {
-                    flex-direction: column;
-                    align-items: center;
-                }
-
-                nav {
-                    margin-top: 0.5rem;
-                }
-            }
-        </style>
+        <link rel="stylesheet" href="css/styles.css" />
+        <script src="js/scripts.js" defer></script>
     </head>
     <body>
         <header id="main-header">
@@ -325,21 +59,51 @@
             </section>
 
             <section id="portfolio">
-                <div style="text-align: center;">
+                <div style="text-align: center">
                     <h1>Portfolio</h1>
-                    <p class="portfolio-intro">Explore my sound design work and audio projects. Each piece represents a unique approach to audio creation and production.</p>
+                    <p class="portfolio-intro">
+                        Explore my sound design work and audio projects. Each
+                        piece represents a unique approach to audio creation and
+                        production.
+                    </p>
                 </div>
                 <div class="portfolio-nav">
-                    <a href="#project1" class="portfolio-link" data-target="project1">Final Track</a>
-                    <a href="#project2" class="portfolio-link" data-target="project2">Sound Design</a>
-                    <a href="#project3" class="portfolio-link" data-target="project3">Will It Stop</a>
-                    <a href="#project4" class="portfolio-link" data-target="project4">Theme & Variations</a>
+                    <a
+                        href="#project1"
+                        class="portfolio-link"
+                        data-target="project1"
+                        >Final Track</a
+                    >
+                    <a
+                        href="#project2"
+                        class="portfolio-link"
+                        data-target="project2"
+                        >Sound Design</a
+                    >
+                    <a
+                        href="#project3"
+                        class="portfolio-link"
+                        data-target="project3"
+                        >Will It Stop</a
+                    >
+                    <a
+                        href="#project4"
+                        class="portfolio-link"
+                        data-target="project4"
+                        >Theme & Variations</a
+                    >
                 </div>
 
                 <div id="project1" class="portfolio-item">
                     <h2>Final Track</h2>
-                    <div class="project-meta">Original Composition • 120 BPM • A Minor/Major</div>
-                    <audio controls src="assets/audio/final_track_project.mp3" class="audio-player"></audio>
+                    <div class="project-meta">
+                        Original Composition • 120 BPM • A Minor/Major
+                    </div>
+                    <audio
+                        controls
+                        src="assets/audio/final_track_project.mp3"
+                        class="audio-player"
+                    ></audio>
 
                     <p>
                         As I reflect on this piece, I get the feeling of brisk,
@@ -413,7 +177,9 @@
 
                 <div id="project2" class="portfolio-item">
                     <h2>Sound Design Reel</h2>
-                    <div class="project-meta">Video Production • Foley Recording • Sound Effects</div>
+                    <div class="project-meta">
+                        Video Production • Foley Recording • Sound Effects
+                    </div>
                     <video
                         controls
                         poster="assets/img/demo_mode_poster.jpg"
@@ -433,8 +199,14 @@
 
                 <div id="project3" class="portfolio-item">
                     <h2>Will It Stop</h2>
-                    <div class="project-meta">Industrial Dance • Mixed Media • Vocal Processing</div>
-                    <audio controls src="assets/audio/will_it_stop.mp3" class="audio-player"></audio>
+                    <div class="project-meta">
+                        Industrial Dance • Mixed Media • Vocal Processing
+                    </div>
+                    <audio
+                        controls
+                        src="assets/audio/will_it_stop.mp3"
+                        class="audio-player"
+                    ></audio>
                     <p>
                         In mixing and mastering "Will It Stop," I carefully
                         blended a combination of loops, MIDI instruments,
@@ -455,8 +227,14 @@
 
                 <div id="project4" class="portfolio-item">
                     <h2>Theme & Variations</h2>
-                    <div class="project-meta">Remix Project • Folk/Rock • Multiple Variations</div>
-                    <audio controls src="assets/audio/original_verse_and_chorus.mp3" class="audio-player"></audio>
+                    <div class="project-meta">
+                        Remix Project • Folk/Rock • Multiple Variations
+                    </div>
+                    <audio
+                        controls
+                        src="assets/audio/original_verse_and_chorus.mp3"
+                        class="audio-player"
+                    ></audio>
                     <p>
                         For this remix project, I chose Cinderella by Mikaela
                         Davis and Southern Star from the Cambridge library,
@@ -468,7 +246,11 @@
                         give the track a fresh dynamic.
                     </p>
 
-                    <audio controls src="assets/audio/variation_1.mp3" class="audio-player"></audio>
+                    <audio
+                        controls
+                        src="assets/audio/variation_1.mp3"
+                        class="audio-player"
+                    ></audio>
                     <p>
                         In this variation, I replaced the drums with a more
                         rock-oriented, electric sound. I also changed the groove
@@ -476,7 +258,11 @@
                         drive to that section.
                     </p>
 
-                    <audio controls src="assets/audio/variation_2.mp3" class="audio-player"></audio>
+                    <audio
+                        controls
+                        src="assets/audio/variation_2.mp3"
+                        class="audio-player"
+                    ></audio>
                     <p>
                         In this variation, I recorded and incorporated a live
                         shaker to enhance the double-time groove sections. The
@@ -487,7 +273,11 @@
                         while maintaining a lively, human touch.
                     </p>
 
-                    <audio controls src="assets/audio/variation_3.mp3" class="audio-player"></audio>
+                    <audio
+                        controls
+                        src="assets/audio/variation_3.mp3"
+                        class="audio-player"
+                    ></audio>
                     <p>
                         Building on the previous two variations, I created
                         ambient wind sounds to add a final touch of natural
@@ -499,254 +289,5 @@
                 </div>
             </section>
         </main>
-
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                // Function to show a specific section
-                const showSection = (sectionId) => {
-                    // Default to home if sectionId is invalid
-                    if (!document.getElementById(sectionId)) {
-                        sectionId = "home";
-                    }
-
-                    // Hide all sections with fade out
-                    document.querySelectorAll("section").forEach((section) => {
-                        section.style.display = "none";
-                        section.classList.remove("fade-enter-active");
-                    });
-
-                    // Show only the target section
-                    const targetSection = document.getElementById(sectionId);
-                    targetSection.style.display = "block";
-
-                    // Add animation class
-                    targetSection.classList.remove("fade-enter-active");
-                    targetSection.classList.add("fade-enter");
-                    setTimeout(
-                        () => targetSection.classList.add("fade-enter-active"),
-                        100,
-                    );
-
-                    // Update active link
-                    document.querySelectorAll("nav a").forEach((navLink) => {
-                        navLink.classList.remove("active");
-                    });
-                    document
-                        .querySelector(`nav a[data-section="${sectionId}"]`)
-                        ?.classList.add("active");
-                };
-
-                // Function to scroll to a portfolio section
-                const scrollToPortfolioSection = (targetId) => {
-                    // Make sure portfolio section is visible first
-                    if (!document.getElementById("portfolio").style.display || 
-                        document.getElementById("portfolio").style.display === "none") {
-                        showSection("portfolio");
-                    }
-                    
-                    // Scroll to the target element
-                    const targetElement = document.getElementById(targetId);
-                    if (targetElement) {
-                        setTimeout(() => {
-                            try {
-                                // Get the height of the sticky header and nav
-                                const headerHeight = document.getElementById("main-header").offsetHeight || 80;
-                                const portfolioNavHeight = document.querySelector(".portfolio-nav").offsetHeight || 60;
-                                
-                                // Calculate the total offset for scrolling
-                                const scrollOffset = headerHeight + portfolioNavHeight + 20; // extra padding
-                                
-                                // Get the target element's position and adjust for the offset
-                                const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY - scrollOffset;
-                                
-                                // Scroll to the adjusted position
-                                window.scrollTo({
-                                    top: targetPosition,
-                                    behavior: "smooth"
-                                });
-                            } catch (error) {
-                                // Fallback if there are any errors with the calculation
-                                targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
-                            }
-                        }, 300); // Increased delay to ensure the portfolio section is visible
-                    }
-                };
-
-                // Initialize all sections with fade effect
-                document.querySelectorAll("section").forEach((section) => {
-                    section.classList.add("fade-enter");
-                    // Hide all sections initially (we'll show the correct one after)
-                    section.style.display = "none";
-                });
-
-                // Check for hash in URL or default to home
-                const initialSection = window.location.hash
-                    ? window.location.hash.substring(1)
-                    : "home";
-                showSection(initialSection);
-
-                // Add fade-enter-active class to the visible section
-                setTimeout(() => {
-                    document
-                        .getElementById(initialSection)
-                        ?.classList.add("fade-enter-active");
-                }, 100);
-
-                // Add click event listeners to navigation links
-                document.querySelectorAll("nav a").forEach((link) => {
-                    link.addEventListener("click", (e) => {
-                        e.preventDefault();
-                        const targetId = link.getAttribute("data-section");
-
-                        // Don't do anything if clicking the already active section
-                        if (link.classList.contains("active")) {
-                            return;
-                        }
-
-                        // Update URL hash without triggering scroll
-                        history.pushState(null, null, `#${targetId}`);
-
-                        // Show the target section
-                        showSection(targetId);
-                    });
-                });
-
-                // Add click event listeners to portfolio navigation links
-                document.querySelectorAll(".portfolio-link").forEach((link) => {
-                    link.addEventListener("click", (e) => {
-                        e.preventDefault();
-                        const targetId = link.getAttribute("data-target");
-                        
-                        // Ensure we're on the portfolio section first
-                        if (!document.getElementById("portfolio").style.display || 
-                            document.getElementById("portfolio").style.display === "none") {
-                            // Update URL hash
-                            history.pushState(null, null, "#portfolio");
-                        }
-                        
-                        // Scroll to the target within portfolio
-                        scrollToPortfolioSection(targetId);
-                    });
-                });
-
-                // Listen for hash changes in URL (for browser back/forward buttons)
-                window.addEventListener("hashchange", () => {
-                    const sectionId =
-                        window.location.hash.substring(1) || "home";
-                    showSection(sectionId);
-                });
-
-                const header = document.getElementById("main-header");
-                const shrinkOffset = 150;
-
-                window.addEventListener("scroll", () => {
-                    if (window.scrollY > shrinkOffset) {
-                        header.classList.add("shrink");
-                        
-                        // Make the portfolio nav sticky when in portfolio section
-                        if (document.getElementById("portfolio").style.display === "block") {
-                            const portfolioNav = document.querySelector(".portfolio-nav");
-                            if (portfolioNav) {
-                                portfolioNav.style.position = "sticky";
-                                portfolioNav.style.top = `${header.offsetHeight}px`; // Dynamic header height
-                                portfolioNav.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
-                                portfolioNav.style.opacity = "1";
-                                // Highlight the current active portfolio section in the nav
-                                updateActivePortfolioLink();
-                            }
-                        }
-                    } else {
-                        header.classList.remove("shrink");
-                        
-                        // Reset portfolio nav
-                        const portfolioNav = document.querySelector(".portfolio-nav");
-                        if (portfolioNav) {
-                            portfolioNav.style.position = "relative";
-                            portfolioNav.style.top = "0";
-                            portfolioNav.style.boxShadow = "none";
-                        }
-                    }
-                });
-
-                // Function to reset portfolio nav state when switching sections
-                const resetPortfolioNav = () => {
-                    const portfolioNav = document.querySelector(".portfolio-nav");
-                    if (portfolioNav) {
-                        if (document.getElementById("portfolio").style.display !== "block") {
-                            portfolioNav.style.position = "relative";
-                            portfolioNav.style.top = "0";
-                            portfolioNav.style.boxShadow = "none";
-                        }
-                    }
-                };
-
-                // Extend showSection to reset the portfolio nav when changing sections
-                const originalShowSection = showSection;
-                window.showSection = (sectionId) => {
-                    originalShowSection(sectionId);
-                    resetPortfolioNav();
-                    
-                    // If URL hash contains a portfolio section, scroll to it after showing portfolio
-                    if (sectionId === "portfolio" && window.location.hash) {
-                        const hash = window.location.hash.substring(1);
-                        if (hash.startsWith("project") && document.getElementById(hash)) {
-                            setTimeout(() => {
-                                scrollToPortfolioSection(hash);
-                            }, 300);
-                        }
-                    }
-                };
-                
-                // Handle direct linking to portfolio sections
-                if (window.location.hash && window.location.hash.startsWith("#project")) {
-                    const hash = window.location.hash.substring(1);
-                    if (document.getElementById(hash)) {
-                        setTimeout(() => {
-                            showSection("portfolio");
-                            scrollToPortfolioSection(hash);
-                        }, 500);
-                    }
-                }
-                // Function to update which portfolio link is active based on scroll position
-                const updateActivePortfolioLink = () => {
-                    if (document.getElementById("portfolio").style.display !== "block") return;
-                    
-                    const portfolioSections = ["project1", "project2", "project3", "project4"];
-                    const scrollPosition = window.scrollY;
-                    
-                    // Get header and nav heights for offset calculation
-                    const headerHeight = document.getElementById("main-header").offsetHeight || 80;
-                    const portfolioNavHeight = document.querySelector(".portfolio-nav").offsetHeight || 60;
-                    const scrollOffset = headerHeight + portfolioNavHeight + 100; // Add extra padding
-                    
-                    // Find which section is currently in view
-                    let currentSection = portfolioSections[0];
-                    
-                    for (const sectionId of portfolioSections) {
-                        const section = document.getElementById(sectionId);
-                        if (!section) continue;
-                        
-                        const sectionTop = section.getBoundingClientRect().top + window.scrollY;
-                        if (scrollPosition >= sectionTop - scrollOffset) {
-                            currentSection = sectionId;
-                        }
-                    }
-                    
-                    // Update active class on portfolio links
-                    document.querySelectorAll(".portfolio-link").forEach(link => {
-                        if (link.getAttribute("data-target") === currentSection) {
-                            link.style.backgroundColor = "var(--primary)";
-                            link.style.color = "white";
-                        } else {
-                            link.style.backgroundColor = "transparent";
-                            link.style.color = "var(--text)";
-                        }
-                    });
-                };
-                
-                // Add scroll event listener to update active portfolio link
-                window.addEventListener("scroll", updateActivePortfolioLink);
-            });
-        </script>
     </body>
 </html>
