@@ -1,234 +1,518 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Function to show a specific section
+  // Particle system for background
+  const createParticles = () => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.style.position = 'fixed';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    canvas.style.pointerEvents = 'none';
+    canvas.style.zIndex = '1';
+    canvas.style.opacity = '0.6';
+    document.body.appendChild(canvas);
+
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const particles = [];
+    const particleCount = 50;
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = (Math.random() - 0.5) * 0.5;
+        this.size = Math.random() * 2 + 1;
+        this.opacity = Math.random() * 0.5 + 0.2;
+        this.hue = Math.random() * 60 + 300; // Purple to red range
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+        // Add subtle pulsing
+        this.opacity += Math.sin(Date.now() * 0.001 + this.x * 0.01) * 0.01;
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        ctx.fillStyle = `hsl(${this.hue}, 70%, 60%)`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new Particle());
+    }
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+
+      // Draw connections between nearby particles
+      particles.forEach((particle1, i) => {
+        particles.slice(i + 1).forEach(particle2 => {
+          const dx = particle1.x - particle2.x;
+          const dy = particle1.y - particle2.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < 100) {
+            ctx.save();
+            ctx.globalAlpha = (1 - distance / 100) * 0.2;
+            ctx.strokeStyle = `hsl(${(particle1.hue + particle2.hue) / 2}, 70%, 60%)`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(particle1.x, particle1.y);
+            ctx.lineTo(particle2.x, particle2.y);
+            ctx.stroke();
+            ctx.restore();
+          }
+        });
+      });
+
+      requestAnimationFrame(animate);
+    };
+    animate();
+  };
+
+  // Initialize particles
+  createParticles();
+
+  // Enhanced audio visualizer
+  const createAudioVisualizer = (audioElement) => {
+    if (!audioElement || audioElement.dataset.visualized) return;
+    audioElement.dataset.visualized = 'true';
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.style.position = 'absolute';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    canvas.style.pointerEvents = 'none';
+    canvas.style.borderRadius = '15px';
+    canvas.style.opacity = '0.8';
+    
+    const container = audioElement.parentElement;
+    container.style.position = 'relative';
+    container.appendChild(canvas);
+
+    const resizeCanvas = () => {
+      canvas.width = container.offsetWidth;
+      canvas.height = container.offsetHeight;
+    };
+    resizeCanvas();
+
+    let audioContext, analyser, dataArray;
+
+    const initAudio = () => {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioContext.createMediaElementSource(audioElement);
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        source.connect(analyser);
+        analyser.connect(audioContext.destination);
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+      }
+    };
+
+    const drawVisualizer = () => {
+      if (!analyser) return;
+
+      analyser.getByteFrequencyData(dataArray);
+      
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      const barWidth = canvas.width / dataArray.length * 2.5;
+      let x = 0;
+
+      for (let i = 0; i < dataArray.length; i++) {
+        const barHeight = (dataArray[i] / 255) * canvas.height * 0.8;
+        
+        const hue = (i / dataArray.length) * 360;
+        const gradient = ctx.createLinearGradient(0, canvas.height - barHeight, 0, canvas.height);
+        gradient.addColorStop(0, `hsla(${hue}, 70%, 60%, 0.8)`);
+        gradient.addColorStop(1, `hsla(${hue}, 70%, 40%, 0.4)`);
+        
+        ctx.fillStyle = gradient;
+        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+        
+        x += barWidth + 1;
+      }
+      
+      if (!audioElement.paused) {
+        requestAnimationFrame(drawVisualizer);
+      }
+    };
+
+    audioElement.addEventListener('play', () => {
+      initAudio();
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+      drawVisualizer();
+    });
+
+    audioElement.addEventListener('pause', () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+    window.addEventListener('resize', resizeCanvas);
+  };
+
+  // Apply visualizers to all audio elements
+  document.querySelectorAll('audio').forEach(createAudioVisualizer);
+
+  // Glitch text effect for headings
+  const addGlitchEffect = () => {
+    document.querySelectorAll('h1, h2').forEach(heading => {
+      heading.classList.add('glitch-text');
+      heading.setAttribute('data-text', heading.textContent);
+    });
+  };
+  addGlitchEffect();
+
+  // Parallax scrolling effect
+  const parallaxElements = document.querySelectorAll('.portfolio-item');
+  const handleParallax = () => {
+    const scrolled = window.pageYOffset;
+    const rate = scrolled * -0.5;
+
+    parallaxElements.forEach((el, index) => {
+      const yPos = -(scrolled / (index + 1)) * 0.1;
+      el.style.transform = `translateY(${yPos}px)`;
+    });
+  };
+
+  // Intersection Observer for scroll animations
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+        
+        // Stagger animation for portfolio items
+        if (entry.target.classList.contains('portfolio-item')) {
+          const items = entry.target.querySelectorAll('h2, p, audio, video, .project-meta');
+          items.forEach((item, index) => {
+            setTimeout(() => {
+              item.style.opacity = '1';
+              item.style.transform = 'translateY(0)';
+            }, index * 100);
+          });
+        }
+      }
+    });
+  }, observerOptions);
+
+  // Observe elements for animations
+  document.querySelectorAll('.portfolio-item, h1, .portfolio-intro').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+    el.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    observer.observe(el);
+  });
+
+  // Mouse trail effect
+  const createMouseTrail = () => {
+    const trail = [];
+    const trailLength = 20;
+
+    document.addEventListener('mousemove', (e) => {
+      trail.push({
+        x: e.clientX,
+        y: e.clientY,
+        opacity: 1
+      });
+
+      if (trail.length > trailLength) {
+        trail.shift();
+      }
+
+      updateTrail();
+    });
+
+    const updateTrail = () => {
+      const existingTrails = document.querySelectorAll('.mouse-trail');
+      existingTrails.forEach(el => el.remove());
+
+      trail.forEach((point, index) => {
+        const trailElement = document.createElement('div');
+        trailElement.className = 'mouse-trail';
+        trailElement.style.cssText = `
+          position: fixed;
+          left: ${point.x}px;
+          top: ${point.y}px;
+          width: ${Math.max(2, 8 - index * 0.3)}px;
+          height: ${Math.max(2, 8 - index * 0.3)}px;
+          background: radial-gradient(circle, rgba(255, 61, 61, ${point.opacity * 0.8}) 0%, transparent 70%);
+          border-radius: 50%;
+          pointer-events: none;
+          z-index: 9999;
+          transform: translate(-50%, -50%);
+          transition: opacity 0.3s ease;
+        `;
+        document.body.appendChild(trailElement);
+
+        point.opacity *= 0.95;
+        
+        setTimeout(() => {
+          if (trailElement.parentNode) {
+            trailElement.remove();
+          }
+        }, 100);
+      });
+    };
+  };
+
+  // Initialize mouse trail on desktop only
+  if (window.innerWidth > 768) {
+    createMouseTrail();
+  }
+
+  // Enhanced section navigation with smooth transitions
   const showSection = (sectionId) => {
-    // Default to home if sectionId is invalid
     if (!document.getElementById(sectionId)) {
       sectionId = "home";
     }
 
-    // Hide all sections with fade out
+    // Add transition class to all sections
     document.querySelectorAll("section").forEach((section) => {
-      section.style.display = "none";
-      section.classList.remove("fade-enter-active");
+      section.style.opacity = '0';
+      section.style.transform = 'translateY(30px)';
+      setTimeout(() => {
+        section.style.display = "none";
+      }, 300);
     });
 
-    // Show only the target section
-    const targetSection = document.getElementById(sectionId);
-    targetSection.style.display = "block";
+    // Show target section with animation
+    setTimeout(() => {
+      const targetSection = document.getElementById(sectionId);
+      targetSection.style.display = "block";
+      
+      setTimeout(() => {
+        targetSection.style.opacity = '1';
+        targetSection.style.transform = 'translateY(0)';
+        
+        // Re-observe elements for intersection animations
+        targetSection.querySelectorAll('.portfolio-item, h1, .portfolio-intro').forEach(el => {
+          observer.observe(el);
+        });
+      }, 50);
+    }, 300);
 
-    // Add animation class
-    targetSection.classList.remove("fade-enter-active");
-    targetSection.classList.add("fade-enter");
-    setTimeout(() => targetSection.classList.add("fade-enter-active"), 100);
-
-    // Update active link
+    // Update active navigation
     document.querySelectorAll("nav a").forEach((navLink) => {
       navLink.classList.remove("active");
     });
-    document
-      .querySelector(`nav a[data-section="${sectionId}"]`)
-      ?.classList.add("active");
+    document.querySelector(`nav a[data-section="${sectionId}"]`)?.classList.add("active");
   };
 
-  // Function to scroll to a portfolio section
+  // Enhanced portfolio section scrolling
   const scrollToPortfolioSection = (targetId) => {
-    // Make sure portfolio section is visible first
-    if (
-      !document.getElementById("portfolio").style.display ||
-      document.getElementById("portfolio").style.display === "none"
-    ) {
+    if (!document.getElementById("portfolio").style.display || 
+        document.getElementById("portfolio").style.display === "none") {
       showSection("portfolio");
     }
 
-    // Scroll to the target element
     const targetElement = document.getElementById(targetId);
     if (targetElement) {
       setTimeout(() => {
-        try {
-          // Get the height of the sticky header and nav
-          const headerHeight =
-            document.getElementById("main-header").offsetHeight || 80;
-          const portfolioNavHeight =
-            document.querySelector(".portfolio-nav").offsetHeight || 60;
+        const headerHeight = document.getElementById("main-header").offsetHeight || 80;
+        const portfolioNavHeight = document.querySelector(".portfolio-nav").offsetHeight || 60;
+        const scrollOffset = headerHeight + portfolioNavHeight + 20;
+        const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY - scrollOffset;
 
-          // Calculate the total offset for scrolling
-          const scrollOffset = headerHeight + portfolioNavHeight + 20; // extra padding
+        window.scrollTo({
+          top: targetPosition,
+          behavior: "smooth",
+        });
 
-          // Get the target element's position and adjust for the offset
-          const targetPosition =
-            targetElement.getBoundingClientRect().top +
-            window.scrollY -
-            scrollOffset;
-
-          // Scroll to the adjusted position
-          window.scrollTo({
-            top: targetPosition,
-            behavior: "smooth",
-          });
-        } catch (error) {
-          // Fallback if there are any errors with the calculation
-          targetElement.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          });
-        }
-      }, 300); // Increased delay to ensure the portfolio section is visible
+        // Add highlight effect
+        targetElement.style.transform = 'scale(1.02)';
+        targetElement.style.boxShadow = '0 20px 60px rgba(255, 61, 61, 0.3)';
+        
+        setTimeout(() => {
+          targetElement.style.transform = '';
+          targetElement.style.boxShadow = '';
+        }, 1000);
+      }, 400);
     }
   };
 
-  // Initialize all sections with fade effect
+  // Initialize sections with transitions
   document.querySelectorAll("section").forEach((section) => {
-    section.classList.add("fade-enter");
-    // Hide all sections initially (we'll show the correct one after)
+    section.style.transition = 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
     section.style.display = "none";
   });
 
-  // Check for hash in URL or default to home
-  const initialSection = window.location.hash
-    ? window.location.hash.substring(1)
-    : "home";
+  // Show initial section
+  const initialSection = window.location.hash ? window.location.hash.substring(1) : "home";
   showSection(initialSection);
 
-  // Add fade-enter-active class to the visible section
-  setTimeout(() => {
-    document.getElementById(initialSection)?.classList.add("fade-enter-active");
-  }, 100);
-
-  // Add click event listeners to navigation links
+  // Navigation event listeners
   document.querySelectorAll("nav a").forEach((link) => {
     link.addEventListener("click", (e) => {
       e.preventDefault();
       const targetId = link.getAttribute("data-section");
 
-      // Don't do anything if clicking the already active section
-      if (link.classList.contains("active")) {
-        return;
-      }
+      if (link.classList.contains("active")) return;
 
-      // Update URL hash without triggering scroll
       history.pushState(null, null, `#${targetId}`);
-
-      // Show the target section
       showSection(targetId);
     });
   });
 
-  // Add click event listeners to portfolio navigation links
+  // Portfolio navigation
   document.querySelectorAll(".portfolio-link").forEach((link) => {
     link.addEventListener("click", (e) => {
       e.preventDefault();
       const targetId = link.getAttribute("data-target");
 
-      // Ensure we're on the portfolio section first
-      if (
-        !document.getElementById("portfolio").style.display ||
-        document.getElementById("portfolio").style.display === "none"
-      ) {
-        // Update URL hash
+      if (!document.getElementById("portfolio").style.display || 
+          document.getElementById("portfolio").style.display === "none") {
         history.pushState(null, null, "#portfolio");
       }
 
-      // Scroll to the target within portfolio
       scrollToPortfolioSection(targetId);
     });
   });
 
-  // Listen for hash changes in URL (for browser back/forward buttons)
+  // Hash change listener
   window.addEventListener("hashchange", () => {
     const sectionId = window.location.hash.substring(1) || "home";
     showSection(sectionId);
   });
 
+  // Enhanced header scroll animation
   const header = document.getElementById("main-header");
   const initialHeaderHeight = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-initial-height'));
   const finalHeaderHeight = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-final-height'));
-  const shrinkOffset = 20; // Start transition even earlier
-  const transitionRange = 130; // Range over which the transition happens
+  const shrinkOffset = 20;
+  const transitionRange = 130;
   
-  // Initialize main padding on load
   document.querySelector('main').style.paddingTop = `${initialHeaderHeight + 20}px`;
 
-  // Add function to update main content padding based on header height
   const updateMainPadding = (headerHeight) => {
     document.querySelector('main').style.paddingTop = `${headerHeight + 20}px`;
   };
-  
-  window.addEventListener("scroll", () => {
-    // Calculate header height based on scroll position for smooth transition
-    if (window.scrollY <= shrinkOffset) {
-      // Fully expanded header
+
+  let ticking = false;
+  const updateHeader = () => {
+    const scrollY = window.scrollY;
+    
+    if (scrollY <= shrinkOffset) {
       header.classList.remove("shrink");
       header.style.height = `${initialHeaderHeight}px`;
       updateMainPadding(initialHeaderHeight);
       
-      // Position elements for large header
-      document.querySelector('header img').style.left = 'calc(50% - 120px)';
-      document.querySelector('header img').style.top = '50px';
-      document.querySelector('header img').style.width = '240px';
-      document.querySelector('header nav').style.top = '280px';
-      document.querySelector('header nav').style.left = '50%';
-      document.querySelector('header nav').style.transform = 'translateX(-50%)';
-    } else if (window.scrollY >= shrinkOffset + transitionRange) {
-      // Fully collapsed header
+      document.querySelector('header img').style.cssText = `
+        left: calc(50% - 120px);
+        top: 50px;
+        width: 240px;
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      `;
+      document.querySelector('header nav').style.cssText = `
+        top: 280px;
+        left: 50%;
+        transform: translateX(-50%);
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      `;
+    } else if (scrollY >= shrinkOffset + transitionRange) {
       header.classList.add("shrink");
       header.style.height = `${finalHeaderHeight}px`;
       updateMainPadding(finalHeaderHeight);
       
-      // Position elements for small header
-      document.querySelector('header img').style.left = '20px';
-      document.querySelector('header img').style.top = '10px';
-      document.querySelector('header img').style.width = '50px';
-      document.querySelector('header nav').style.top = '10px';
-      document.querySelector('header nav').style.left = '100%';
-      document.querySelector('header nav').style.transform = 'translateX(-110%)';
+      document.querySelector('header img').style.cssText = `
+        left: 20px;
+        top: 10px;
+        width: 50px;
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      `;
+      document.querySelector('header nav').style.cssText = `
+        top: 10px;
+        left: 100%;
+        transform: translateX(-110%);
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      `;
     } else {
-      // Calculate intermediate height during transition
-      const scrollProgress = (window.scrollY - shrinkOffset) / transitionRange;
+      const scrollProgress = (scrollY - shrinkOffset) / transitionRange;
       const currentHeight = initialHeaderHeight - scrollProgress * (initialHeaderHeight - finalHeaderHeight);
       header.style.height = `${currentHeight}px`;
       updateMainPadding(currentHeight);
       
-      // Calculate intermediate positions for elements
-      const logoLeftStart = 50; // percentage minus 120px
-      const logoLeftEnd = 20; // pixels
-      const logoTopStart = 50; // pixels
-      const logoTopEnd = 10; // pixels
-      const logoWidthStart = 240; // pixels
-      const logoWidthEnd = 50; // pixels
+      // Smooth interpolation for header elements
+      const logoLeftStart = 50;
+      const logoLeftEnd = 20;
+      const logoTopStart = 50;
+      const logoTopEnd = 10;
+      const logoWidthStart = 240;
+      const logoWidthEnd = 50;
       
-      // Interpolate logo position and size
       const logoLeft = scrollProgress <= 0.5 ? 
         `calc(${(1 - scrollProgress * 2) * logoLeftStart}% - ${(1 - scrollProgress * 2) * 120}px)` : 
         `${logoLeftEnd + (0.5 - Math.min(0.5, scrollProgress - 0.5)) * (logoLeftStart * 2)}px`;
       const logoTop = logoTopStart - scrollProgress * (logoTopStart - logoTopEnd);
       const logoWidth = logoWidthStart - scrollProgress * (logoWidthStart - logoWidthEnd);
       
-      document.querySelector('header img').style.left = logoLeft;
-      document.querySelector('header img').style.top = `${logoTop}px`;
-      document.querySelector('header img').style.width = `${logoWidth}px`;
+      document.querySelector('header img').style.cssText = `
+        left: ${logoLeft};
+        top: ${logoTop}px;
+        width: ${logoWidth}px;
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      `;
       
-      // Interpolate nav position
-      const navTopStart = 280; // pixels
-      const navTopEnd = 10; // pixels
+      const navTopStart = 280;
+      const navTopEnd = 10;
       const navTop = navTopStart - scrollProgress * (navTopStart - navTopEnd);
       
-      document.querySelector('header nav').style.top = `${navTop}px`;
-      
       if (scrollProgress > 0.6) {
-        // Start moving nav to the right side
-        const navTransitionProgress = (scrollProgress - 0.6) / 0.4; // 0 to 1 during last 40% of scroll
-        const navLeftStart = 50; // percent
-        const navLeftEnd = 100; // percent
+        const navTransitionProgress = (scrollProgress - 0.6) / 0.4;
+        const navLeftStart = 50;
+        const navLeftEnd = 100;
         const navLeft = navLeftStart + navTransitionProgress * (navLeftEnd - navLeftStart);
         
-        document.querySelector('header nav').style.left = `${navLeft}%`;
-        document.querySelector('header nav').style.transform = `translateX(-${50 + navTransitionProgress * 60}%)`;
+        document.querySelector('header nav').style.cssText = `
+          top: ${navTop}px;
+          left: ${navLeft}%;
+          transform: translateX(-${50 + navTransitionProgress * 60}%);
+          transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        `;
       } else {
-        document.querySelector('header nav').style.left = '50%';
-        document.querySelector('header nav').style.transform = 'translateX(-50%)';
+        document.querySelector('header nav').style.cssText = `
+          top: ${navTop}px;
+          left: 50%;
+          transform: translateX(-50%);
+          transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        `;
       }
       
-      // Add or remove class based on progress
       if (scrollProgress > 0.8) {
         header.classList.add("shrink");
       } else {
@@ -236,82 +520,37 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // Make the portfolio nav sticky when in portfolio section
+    // Update portfolio nav if in portfolio section
     if (document.getElementById("portfolio").style.display === "block") {
       const portfolioNav = document.querySelector(".portfolio-nav");
       if (portfolioNav) {
         portfolioNav.style.position = "sticky";
-        portfolioNav.style.top = `${header.offsetHeight}px`; // Dynamic header height
-        portfolioNav.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
-        portfolioNav.style.opacity = "1";
-        // Highlight the current active portfolio section in the nav
+        portfolioNav.style.top = `${header.offsetHeight}px`;
         updateActivePortfolioLink();
       }
-    } else {
-      // Reset portfolio nav
-      const portfolioNav = document.querySelector(".portfolio-nav");
-      if (portfolioNav) {
-        portfolioNav.style.position = "relative";
-        portfolioNav.style.top = "0";
-        portfolioNav.style.boxShadow = "none";
-      }
+    }
+
+    ticking = false;
+  };
+
+  window.addEventListener("scroll", () => {
+    if (!ticking) {
+      requestAnimationFrame(updateHeader);
+      handleParallax();
+      ticking = true;
     }
   });
 
-  // Function to reset portfolio nav state when switching sections
-  const resetPortfolioNav = () => {
-    const portfolioNav = document.querySelector(".portfolio-nav");
-    if (portfolioNav) {
-      if (document.getElementById("portfolio").style.display !== "block") {
-        portfolioNav.style.position = "relative";
-        portfolioNav.style.top = "0";
-        portfolioNav.style.boxShadow = "none";
-      }
-    }
-  };
-
-  // Extend showSection to reset the portfolio nav when changing sections
-  const originalShowSection = showSection;
-  window.showSection = (sectionId) => {
-    originalShowSection(sectionId);
-    resetPortfolioNav();
-
-    // If URL hash contains a portfolio section, scroll to it after showing portfolio
-    if (sectionId === "portfolio" && window.location.hash) {
-      const hash = window.location.hash.substring(1);
-      if (hash.startsWith("project") && document.getElementById(hash)) {
-        setTimeout(() => {
-          scrollToPortfolioSection(hash);
-        }, 300);
-      }
-    }
-  };
-
-  // Handle direct linking to portfolio sections
-  if (window.location.hash && window.location.hash.startsWith("#project")) {
-    const hash = window.location.hash.substring(1);
-    if (document.getElementById(hash)) {
-      setTimeout(() => {
-        showSection("portfolio");
-        scrollToPortfolioSection(hash);
-      }, 500);
-    }
-  }
-  // Function to update which portfolio link is active based on scroll position
+  // Portfolio link highlighting
   const updateActivePortfolioLink = () => {
     if (document.getElementById("portfolio").style.display !== "block") return;
 
     const portfolioSections = ["project1", "project2", "project3", "project4"];
     const scrollPosition = window.scrollY;
+    const headerHeight = document.getElementById("main-header").offsetHeight || 80;
+    const portfolioNavHeight = document.querySelector(".portfolio-nav").offsetHeight || 60;
+    const scrollOffset = headerHeight + portfolioNavHeight + 100;
 
-    // Get header and nav heights for offset calculation
-    const headerHeight =
-      document.getElementById("main-header").offsetHeight || 80;
-    const portfolioNavHeight =
-      document.querySelector(".portfolio-nav").offsetHeight || 60;
-    const scrollOffset = headerHeight + portfolioNavHeight + 100; // Add extra padding
-
-    // Find which section is currently in view
     let currentSection = portfolioSections[0];
 
     for (const sectionId of portfolioSections) {
@@ -324,18 +563,59 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // Update active class on portfolio links
     document.querySelectorAll(".portfolio-link").forEach((link) => {
       if (link.getAttribute("data-target") === currentSection) {
-        link.style.backgroundColor = "var(--primary)";
+        link.style.background = "var(--gradient-primary)";
         link.style.color = "white";
+        link.style.transform = "translateY(-2px) scale(1.05)";
+        link.style.boxShadow = "0 8px 25px var(--primary-glow)";
       } else {
-        link.style.backgroundColor = "transparent";
+        link.style.background = "var(--glass)";
         link.style.color = "var(--text)";
+        link.style.transform = "";
+        link.style.boxShadow = "";
       }
     });
   };
 
-  // Add scroll event listener to update active portfolio link
-  window.addEventListener("scroll", updateActivePortfolioLink);
+  // Handle direct portfolio links
+  if (window.location.hash && window.location.hash.startsWith("#project")) {
+    const hash = window.location.hash.substring(1);
+    if (document.getElementById(hash)) {
+      setTimeout(() => {
+        showSection("portfolio");
+        scrollToPortfolioSection(hash);
+      }, 500);
+    }
+  }
+
+  // Ensure only one media plays at a time
+  const mediaElements = document.querySelectorAll("audio, video");
+  mediaElements.forEach((media) => {
+    media.addEventListener("play", function () {
+      mediaElements.forEach((otherMedia) => {
+        if (otherMedia !== media && !otherMedia.paused) {
+          otherMedia.pause();
+        }
+      });
+    });
+  });
+
+  // Add loading animation
+  document.body.classList.add('loading');
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.body.classList.remove('loading');
+    }, 500);
+  });
+
+  // Performance optimization: debounce resize events
+  let resizeTimeout;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      // Recalculate dimensions and update animations
+      updateHeader();
+    }, 100);
+  });
 });

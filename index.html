@@ -14,6 +14,11 @@
         />
         <meta name="author" content="Nicole" />
 
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
         <!-- Open Graph / Facebook -->
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://halverneus.github.io/" />
@@ -55,6 +60,11 @@
 
         <link rel="stylesheet" href="css/styles.css" />
         <link rel="icon" href="assets/img/nomadic_sound_logo.png" />
+        
+        <!-- Preload critical resources -->
+        <link rel="preload" href="assets/img/nomadic_sound_logo.png" as="image">
+        <link rel="preload" href="css/styles.css" as="style">
+        
         <script src="js/scripts.js" defer></script>
         <script>
             // This script ensures only one media element plays at a time
@@ -91,40 +101,82 @@
 
         <main>
             <section id="home">
-                <h1>Home</h1>
-                <p>Welcome to Nomadic Sound!</p>
-                <p>
-                    Explore our website to learn more about our services and
-                    offerings.
-                </p>
-                <p>Discover how we can help you achieve your audio goals.</p>
+                <div class="hero-content">
+                    <h1 data-text="Welcome to Nomadic Sound">Welcome to Nomadic Sound</h1>
+                    <div class="hero-description">
+                        <p class="hero-tagline">Where Sound Meets Innovation</p>
+                        <p class="hero-text">
+                            Explore cutting-edge audio production, immersive sound design, and original compositions 
+                            crafted with passion and precision.
+                        </p>
+                        <p class="hero-text">
+                            Discover how professional audio can transform your creative vision into reality.
+                        </p>
+                        <div class="hero-actions">
+                            <a href="#portfolio" class="cta-button" data-section="portfolio">View Portfolio</a>
+                            <a href="#about" class="cta-button secondary" data-section="about">About Nicole</a>
+                        </div>
+                    </div>
+                </div>
             </section>
             <section id="about">
-                <h1>About Nicole</h1>
-                <p>
-                    Nicole is a dynamic professional with diverse skill sets
-                    including experience from manufacturing technician to
-                    software developer to office manager. Most recently, for two
-                    years, she served as Board President for a roller derby
-                    league, overseeing agendas, meetings, and league business.
-                    She's adept at scheduling, event planning, and staff
-                    management. Nicole also showcased her organizational and
-                    customer service skills in previous jobs as an office
-                    manager. In software development, Nicole worked as a
-                    freelance Software Developer using her web development and
-                    administration skills, maintaining software repositories,
-                    and communicating with investors. She was also a Repair
-                    Technician excelling in troubleshooting, repair, and
-                    meticulous documentation. As a manufacturing technician,
-                    Nicole was able to develop her supervisory skills and
-                    adaptability. Her strong community spirit and leadership
-                    flair shine through her roles in roller derby, nonprofit
-                    volunteering, and beyond. Currently, she is attending
-                    college full-time to achieve her Bachelor's degree in Audio
-                    Production. Not one to stay still for long, besides her love
-                    of music and attending live concerts, Nicole also loves to
-                    be active in and outdoors.
-                </p>
+                <div class="about-content">
+                    <h1 data-text="About Nicole">About Nicole</h1>
+                    <div class="about-grid">
+                        <div class="about-text">
+                            <div class="about-highlight">
+                                <h3>Current Focus</h3>
+                                <p>
+                                    Currently pursuing a Bachelor's degree in Audio Production, Nicole combines 
+                                    academic excellence with real-world experience to create exceptional audio experiences.
+                                </p>
+                            </div>
+                            
+                            <div class="about-section">
+                                <h3>Professional Journey</h3>
+                                <p>
+                                    Nicole brings a unique multidisciplinary approach to audio production, drawing from 
+                                    her diverse background spanning technology, leadership, and creative arts. Her experience 
+                                    as a Software Developer provides technical precision, while her role as Board President 
+                                    of a roller derby league honed her project management and leadership skills.
+                                </p>
+                            </div>
+
+                            <div class="about-section">
+                                <h3>Technical Expertise</h3>
+                                <p>
+                                    With a foundation in software development and system administration, Nicole approaches 
+                                    audio production with both creative vision and technical mastery. Her background as a 
+                                    Repair Technician instilled meticulous attention to detail and problem-solving skills 
+                                    that translate perfectly to audio engineering.
+                                </p>
+                            </div>
+
+                            <div class="about-section">
+                                <h3>Beyond the Studio</h3>
+                                <p>
+                                    When not crafting audio experiences, Nicole channels her energy into live music, 
+                                    outdoor adventures, and community involvement. Her passion for music extends beyond 
+                                    production into experiencing diverse sounds and supporting local artists.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="skills-showcase">
+                            <h3>Core Competencies</h3>
+                            <div class="skill-tags">
+                                <span class="skill-tag">Audio Production</span>
+                                <span class="skill-tag">Sound Design</span>
+                                <span class="skill-tag">Music Composition</span>
+                                <span class="skill-tag">Foley Recording</span>
+                                <span class="skill-tag">Mixing & Mastering</span>
+                                <span class="skill-tag">Project Management</span>
+                                <span class="skill-tag">Technical Innovation</span>
+                                <span class="skill-tag">Creative Direction</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <section id="portfolio">
