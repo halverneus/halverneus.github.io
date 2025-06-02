@@ -11,7 +11,7 @@
     --glass-border: rgba(255, 255, 255, 0.2);
     --header-initial-height: 340px;
     --header-final-height: 80px;
-    --gradient-primary: linear-gradient(135deg, #ff3d3d, #ff6b6b, #ff8e53);
+    --gradient-primary: linear-gradient(135deg, #e41f1a, #c61712, #8b0f0a);
     --gradient-secondary: linear-gradient(135deg, #667eea, #764ba2);
     --gradient-accent: linear-gradient(135deg, #ffd700, #ffed4e);
 }
