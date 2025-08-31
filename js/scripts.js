@@ -613,14 +613,24 @@ document.addEventListener("DOMContentLoaded", () => {
   const updateActivePortfolioLink = () => {
     if (document.getElementById("portfolio").style.display !== "block") return;
 
-    const portfolioSections = [
-      "project1",
-      "project2",
-      "project3",
-      "project4",
-      "project5",
-      "project6",
-    ];
+    // Generate a list of 'portfolio-items' under the 'portfolio' section.
+    let portfolio = document.getElementById("portfolio");
+    if (!portfolio) return;
+    let items = portfolio.querySelectorAll(".portfolio-item");
+    if (items.length === 0) return;
+
+    let portfolioSections = [];
+    for (const item of items) {
+      // Skip if the class is not 'portfolio-item'
+      if (!item.classList.contains("portfolio-item")) continue;
+
+      // Get the ID of the portfolio item
+      const id = item.id;
+      if (id) {
+        portfolioSections.push(id);
+      }
+    }
+
     const scrollPosition = window.scrollY;
     const headerHeight =
       document.getElementById("main-header").offsetHeight || 80;
