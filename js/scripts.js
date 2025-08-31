@@ -613,7 +613,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const updateActivePortfolioLink = () => {
     if (document.getElementById("portfolio").style.display !== "block") return;
 
-    const portfolioSections = ["project1", "project2", "project3", "project4"];
+    const portfolioSections = [
+      "project1",
+      "project2",
+      "project3",
+      "project4",
+      "project5",
+      "project6",
+    ];
     const scrollPosition = window.scrollY;
     const headerHeight =
       document.getElementById("main-header").offsetHeight || 80;
@@ -745,12 +752,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const isMobile = window.innerWidth <= 768;
       const nav = document.querySelector("header nav");
       const img = document.querySelector("header img");
-      
+
       if (isMobile) {
         // Reset to mobile styles - remove any inline styles that might interfere
         nav.style.cssText = "";
         img.style.cssText = "";
-        
+
         // Close mobile menu if it's open and ensure proper mobile state
         if (menuOpen) {
           menuOpen = false;
@@ -769,14 +776,12 @@ document.addEventListener("DOMContentLoaded", () => {
           document.body.style.overflow = "";
         }
       }
-      
+
       // Recalculate dimensions and update animations
       updateHeader();
     }, 100);
   });
 });
-
-
 
 // Particle system for background
 const createParticles = () => {
