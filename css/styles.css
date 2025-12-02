@@ -1314,6 +1314,8 @@ button:focus-visible {
 .email-icon,
 .linkedin-icon {
     font-size: 1rem;
+    width: 16px;
+    text-align: center;
 }
 
 /* Adjust main content to account for footer */
